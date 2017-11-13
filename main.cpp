@@ -2,7 +2,7 @@
 int getPrio(char op) {
 	switch (op)
 	{
-	case'#':return 0;
+	case'@':return 0;
 	case'(':return 1;
 	case'+':return 2;
 	case'-':return 2;
@@ -23,9 +23,16 @@ int getVal(char op, int right, int left) {
 	}
 }
 double getNumber(char*& arr) {
+	bool isNeg = false;
 	double sum[20] = { 0 };
 	int i = 0;
 	double result = 0;
+	//judge whether the number is negative
+	if (*arr == '#') {
+		isNeg = true;
+		arr++;
+	}
+	
 	while (*arr != ' '&&*arr!='.') {
 		sum[i] = *arr - 48;
 		i++;
@@ -35,6 +42,8 @@ double getNumber(char*& arr) {
 	for (int j = 0; j < i; j++, k--) {
 		result += (sum[j] * pow(10, k));
 	}
+	
+	//if the number is float,get the value of decimal
 	if (*arr == '.') {
 		arr++;
 		for (int n = 0; n < 20; n++) {
@@ -50,7 +59,9 @@ double getNumber(char*& arr) {
 			result += (sum[m] / pow(10, m + 1));
 		}
 	}
-	return result;
+
+	if (isNeg) return -result;
+	else return result;
 }
 void calInfixExp(string expression) {
 	const char* p = expression.c_str();
@@ -127,7 +138,7 @@ string infixToPostfixBeta(string expression) {
 	middle = const_cast<char*>(expression.c_str());
 	*back = 0;
 	LStack<char> optr;
-	optr.push('#');
+	optr.push('@');
 	while (*middle) {
 		if (isdigit(*middle) || *middle == '.') {
 			*back = *middle;
@@ -141,15 +152,21 @@ string infixToPostfixBeta(string expression) {
 					back++;
 				}
 			}
+			if ((*middle == '-' && !*back)||(*middle == '-' && !isdigit(*(middle-1))&&*(middle-1)!=')')) {
+				*back = '#';
+				back++;
+				middle++;
+				continue;
+			}
 			if (*middle == ')') {
 				while (optr.topValue() != '(') {
 					*back = optr.pop();
 					back++;
-					middle++;
 					*back = ' ';
 					back++;
 				}
-				optr.pop();
+				char temp = optr.pop();
+				middle++;
 			}
 			else if (*middle == '(') {
 				optr.push(*middle);
@@ -169,7 +186,7 @@ string infixToPostfixBeta(string expression) {
 			}
 		}
 	}
-	while (optr.topValue()!='#') {
+	while (optr.topValue()!='@') {
 		*back = ' ';
 		back++;
 		*back = optr.pop();
@@ -200,7 +217,7 @@ void calcPostfixExpBeta(string expression) {
 	back = const_cast<char*>(expression.c_str());
 	LStack<double> opnd;
 	while (*back) {
-		if (isdigit(*back)) {
+		if (isdigit(*back)||*back=='#') {
 			opnd.push(getNumber(back));
 		}
 		else if (*back==' ') {
@@ -240,29 +257,34 @@ int main() {
 	string expression;
 	while (1) {
 		cout << "Welcome!" << endl;
+		cout << "0.exit" << endl;
 		cout << "1.calculate by mid expression" << endl;
 		cout << "2.calculate by back expression" << endl;
-		cout << "3.calculate by mid expression beta" << endl;
 		int option = 0;
 		cin >> option;
-		switch (option) {
-		case 1:
-			cout << "please input a mid expression" << endl;
-			cin >> expression;
-			calInfixExp(expression);
-			break;
-		case 2:
-			cout << "please input a mid expression" << endl;
-			cin >> expression;
-			calcPostfixExp(infixToPostfix(expression));
-			break;
-		case 3:
-			cout << "please input a mid expression" << endl;
-			cin >> expression;
-			calcPostfixExpBeta(infixToPostfixBeta(expression));
-			break;
-		case 0:
-			break;
+		if (option >= 0 && option <= 4) {
+			switch (option) {
+			case 1:
+				cout << "please input a mid expression" << endl;
+				cin >> expression;
+				calInfixExp(expression);
+				break;
+			case 2:
+				cout << "please input a mid expression" << endl;
+				cin >> expression;
+				calcPostfixExpBeta(infixToPostfixBeta(expression));
+				break;
+			case 4:
+				cout << "test" << endl;
+				cin >> expression;
+				infixToPostfixBeta(expression);
+			case 0:
+				exit(-1);
+				break;
+			}
+		}
+		else {
+			cout << "valid input. please input again" << endl;
 		}
 		system("pause");
 		system("cls");
