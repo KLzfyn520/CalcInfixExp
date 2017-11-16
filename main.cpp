@@ -91,7 +91,7 @@ void calInfixExp(string expression) {
 			}
 		}
 	}
-	while (opnd.length() >= 2) {
+	while (optr.topValue()!='#') {
 		opnd.push(getVal(optr.pop(), opnd.pop(), opnd.pop()));
 	}
 	cout << "the result is "<<opnd.topValue() << endl;
@@ -255,36 +255,45 @@ void calcPostfixExpBeta(string expression) {
 }
 int main() {
 	string expression;
+	int option = -1;
 	while (1) {
-		cout << "Welcome!" << endl;
-		cout << "0.exit" << endl;
-		cout << "1.calculate by mid expression" << endl;
-		cout << "2.calculate by back expression" << endl;
-		int option = 0;
-		cin >> option;
-		if (option >= 0 && option <= 4) {
-			switch (option) {
-			case 1:
-				cout << "please input a mid expression" << endl;
-				cin >> expression;
-				calInfixExp(expression);
-				break;
-			case 2:
-				cout << "please input a mid expression" << endl;
-				cin >> expression;
-				calcPostfixExpBeta(infixToPostfixBeta(expression));
-				break;
-			case 4:
-				cout << "test" << endl;
-				cin >> expression;
-				infixToPostfixBeta(expression);
-			case 0:
-				exit(-1);
-				break;
+		try {
+			cout << "Welcome!" << endl;
+			cout << "0.exit" << endl;
+			cout << "1.calculate by mid expression" << endl;
+			cout << "2.calculate by back expression" << endl;
+			char temp;
+			cin >> temp;
+			if (isdigit(temp))
+			{
+				option = temp-'0';
 			}
+			if (option >= 0 && option <= 2) {
+				switch (option) {
+				case 1:
+					cout << "please input a mid expression" << endl;
+					cin >> expression;
+					calInfixExp(expression);
+					break;
+				case 2:
+					cout << "please input a mid expression" << endl;
+					cin >> expression;
+					calcPostfixExpBeta(infixToPostfixBeta(expression));
+					break;
+				case 0:
+					exit(-1);
+				}
+			}
+			else {
+				throw "valid value of option";
+			}
+			option = -1;
 		}
-		else {
-			cout << "valid input. please input again" << endl;
+		catch (char *str) {
+			cout << str << endl;
+		}
+		catch (exception &e) {
+			cout << e.what() << endl;
 		}
 		system("pause");
 		system("cls");
