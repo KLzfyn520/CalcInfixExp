@@ -5,15 +5,25 @@
 
 #include <stdio.h>
 #include<iostream>
+#include<exception>
 #include<string>
 using namespace std;
 
+class myexception : public exception
+{
+	virtual const char* what() const throw()
+	{
+		return "please write again";
+	}
+}myex;
+
 void Assert(bool val, string s) {
 	if (!val) {
-		cout << "Assertion Failed:" << s << endl;
-		exit(-1);
+		cout << s << endl;
+		throw myex;
 	}
 }
+
 template<typename E>class Stack {
 private:
 	void operator = (const Stack&) {}
@@ -91,7 +101,7 @@ public:
 	}
 
 	E pop() {
-		Assert(top != NULL, "Stack is empty");
+		Assert(top != NULL, "wrong format in expression");
 		E it = top->element;
 		Link<E>* ltemp = top->next;
 		delete top;
@@ -101,7 +111,7 @@ public:
 	}
 
 	const E& topValue() const {
-		Assert(top != NULL, "Stack is empty");
+		Assert(top != NULL, "wrong format in expression");
 		 return top->element;
 	}
 
