@@ -1,4 +1,17 @@
 #include "head.h"
+int getOption(){
+	string temp = "";
+	cin >> temp;
+	if (temp == "")
+		return -1;
+	bool isDigit = true;
+	for (int i = 0; i<temp.size(); i++)
+		if ((temp.at(i)>'9') || (temp.at(i)<'0'))
+			isDigit = false;
+	if (!isDigit)
+		return -1;
+	return atoi(temp.c_str());
+}
 int getPrio(char op) {
 	switch (op)
 	{
@@ -260,31 +273,17 @@ int main() {
 		try {
 			cout << "Welcome!" << endl;
 			cout << "0.exit" << endl;
-			cout << "1.calculate by mid expression" << endl;
-			cout << "2.calculate by back expression" << endl;
-			char temp;
-			cin >> temp;
-			if (isdigit(temp))
-			{
-				option = temp-'0';
-			}
-			if (option >= 0 && option <= 2) {
-				switch (option) {
-				case 1:
-					cout << "please input a mid expression" << endl;
-					cin >> expression;
-					calInfixExp(expression);
-					break;
-				case 2:
-					cout << "please input a mid expression" << endl;
-					cin >> expression;
-					calcPostfixExpBeta(infixToPostfixBeta(expression));
-					break;
-				case 0:
-					exit(-1);
-				}
-			}
-			else {
+			cout << "1.calculate expression" << endl;
+			option = getOption();
+			switch (option) {
+			case 1:
+				cout << "please input a mid expression" << endl;
+				cin >> expression;
+				calcPostfixExp(infixToPostfix(expression));
+				break;
+			case 0:
+				exit(-1);
+			default:
 				throw "valid value of option";
 			}
 			option = -1;
